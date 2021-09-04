@@ -76,17 +76,6 @@ class LaneDetection:
         # changing color space to HSV
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-        # hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-        lowOrange = np.array([0,0,216])
-        highOrange = np.array([79,255,255])
-
-        mask1 = cv2.inRange(hsv, lowOrange, highOrange)
-        kernel = np.ones((30,30), np.uint8)
-        dilation = cv2.dilate(mask1, kernel, iterations=1)
-        hsv[dilation>0] = (0,0,0)
-        img = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-
         # setting threshold limits for white color filter
         lower = np.array([self.Hue_low, self.Saturation_low, self.Value_low])
         upper = np.array([self.Hue_high, self.Saturation_high, self.Value_high])

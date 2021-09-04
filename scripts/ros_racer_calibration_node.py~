@@ -189,17 +189,6 @@ class Calibration:
         image_width = right_width-left_width
         image_height = bottom_height-start_height
 
-        hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-
-        lowOrange = np.array([0,0,216])
-        highOrange = np.array([79,255,255])
-
-        mask1 = cv2.inRange(hsv, lowOrange, highOrange)
-        kernel = np.ones((30,30), np.uint8)
-        dilation = cv2.dilate(mask1, kernel, iterations=1)
-        hsv[dilation>0] = (0,0,0)
-        img = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-
         # changing color space to HSV
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
         lower = np.array([lowH, lowS, lowV])

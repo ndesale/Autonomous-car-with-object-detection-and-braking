@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import rospy
 from std_msgs.msg import Float32, Int32, Int32MultiArray, Int16
-import time
 
 LANE_GUIDANCE_NODE_NAME = 'lane_guidance_node'
 STEERING_TOPIC_NAME = '/steering'
@@ -16,7 +15,7 @@ class PathPlanner:
         self.init_node = rospy.init_node(LANE_GUIDANCE_NODE_NAME, anonymous=False)
         self.steering_publisher = rospy.Publisher(STEERING_TOPIC_NAME, Float32, queue_size=1)
         self.throttle_publisher = rospy.Publisher(THROTTLE_TOPIC_NAME, Float32, queue_size=1)
-        self.object_detection_subscriber = rospy.Subscriber(OBJECT_DETECTION_TOPIC, Int16, self.object_detection_callback)
+        self.object_detection_subscriber = rospy.Subscriber(OBJECT_DETECTION_TOPIC, self.object_detection_callback)
         self.steering_float = Float32()
         self.throttle_float = Float32()
         self.centroid_subscriber = rospy.Subscriber(CENTROID_TOPIC_NAME, Float32, self.controller)
@@ -34,19 +33,14 @@ class PathPlanner:
             f'\nsteering_sensitivity: {self.steering_sensitivity}'
             f'\nno_error_throttle: {self.no_error_throttle}'
             f'\nerror_throttle: {self.error_throttle}'
-            f'\nerror_threshold: {self.error_threshold}'
-            f'\nCatched_stop_value: {self.stop}')
+            f'\nerror_threshold: {self.error_threshold}')
 
     def controller(self, data):
         # try:
         kp = self.steering_sensitivity
         error_x = data.data
         rospy.loginfo(f"{error_x}")
-        
-        if self.stop == 1:
-            throttle_float = self.zero_throttle
-            time.sleep(0.003)
-        elif error_x <= self.error_threshold:
+        if error_x <= self.error_threshold or self.stop == 1:
             throttle_float = self.no_error_throttle
         else:
             throttle_float = self.error_throttle
@@ -70,8 +64,7 @@ class PathPlanner:
         print("Shut down complete")
 
     def object_detection_callback(self, data):
-        self.stop = int(data.data)
-        # print("Catched Value: "+str(self.stop))
+        self.stop = data.data
 
 
 def main():

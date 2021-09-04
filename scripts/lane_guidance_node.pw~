@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import rospy
 from std_msgs.msg import Float32, Int32, Int32MultiArray, Int16
-import time
 
 LANE_GUIDANCE_NODE_NAME = 'lane_guidance_node'
 STEERING_TOPIC_NAME = '/steering'
@@ -45,7 +44,6 @@ class PathPlanner:
         
         if self.stop == 1:
             throttle_float = self.zero_throttle
-            time.sleep(0.003)
         elif error_x <= self.error_threshold:
             throttle_float = self.no_error_throttle
         else:
